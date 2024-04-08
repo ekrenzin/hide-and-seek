@@ -1,0 +1,135 @@
+[debug] [2024-04-08T15:54:48.403Z] ----------------------------------------------------------------------
+[debug] [2024-04-08T15:54:48.405Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy --only functions
+[debug] [2024-04-08T15:54:48.405Z] CLI Version:   13.7.1
+[debug] [2024-04-08T15:54:48.405Z] Platform:      darwin
+[debug] [2024-04-08T15:54:48.405Z] Node Version:  v20.9.0
+[debug] [2024-04-08T15:54:48.405Z] Time:          Mon Apr 08 2024 08:54:48 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-04-08T15:54:48.405Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-04-08T15:54:48.442Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-04-08T15:54:48.442Z] > authorizing via signed-in user (ean@eankrenzin.com)
+[debug] [2024-04-08T15:54:48.442Z] [iam] checking project hide-and-seek-1045f for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2024-04-08T15:54:48.443Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/hide-and-seek-1045f:testIamPermissions [none]
+[debug] [2024-04-08T15:54:48.443Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/hide-and-seek-1045f:testIamPermissions x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:48.443Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/hide-and-seek-1045f:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2024-04-08T15:54:48.849Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/hide-and-seek-1045f:testIamPermissions 200
+[debug] [2024-04-08T15:54:48.849Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/hide-and-seek-1045f:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2024-04-08T15:54:48.850Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/hide-and-seek-1045f/serviceAccounts/hide-and-seek-1045f@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2024-04-08T15:54:48.850Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/hide-and-seek-1045f/serviceAccounts/hide-and-seek-1045f@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2024-04-08T15:54:49.330Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/hide-and-seek-1045f/serviceAccounts/hide-and-seek-1045f@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2024-04-08T15:54:49.331Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/hide-and-seek-1045f/serviceAccounts/hide-and-seek-1045f@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'hide-and-seek-1045f'...
+[info] 
+[info] i  deploying functions 
+[debug] [2024-04-08T15:54:49.336Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f [none]
+[debug] [2024-04-08T15:54:49.859Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f 200
+[debug] [2024-04-08T15:54:49.860Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f {"projectId":"hide-and-seek-1045f","projectNumber":"281271209734","displayName":"Hide and Seek","name":"projects/hide-and-seek-1045f","resources":{"hostingSite":"hide-and-seek-1045f"},"state":"ACTIVE","etag":"1_15d40acd-e191-4bd5-b7f4-75bd4de23e3e"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2024-04-08T15:54:49.865Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudfunctions.googleapis.com [none]
+[debug] [2024-04-08T15:54:49.865Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:49.868Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/runtimeconfig.googleapis.com [none]
+[debug] [2024-04-08T15:54:49.868Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:49.870Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudbuild.googleapis.com [none]
+[debug] [2024-04-08T15:54:49.870Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudbuild.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:49.871Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/artifactregistry.googleapis.com [none]
+[debug] [2024-04-08T15:54:49.871Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/artifactregistry.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:50.462Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudfunctions.googleapis.com 200
+[debug] [2024-04-08T15:54:50.463Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudfunctions.googleapis.com [omitted]
+[info] ✔  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2024-04-08T15:54:50.464Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/runtimeconfig.googleapis.com 200
+[debug] [2024-04-08T15:54:50.464Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2024-04-08T15:54:50.465Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudbuild.googleapis.com 200
+[debug] [2024-04-08T15:54:50.465Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/cloudbuild.googleapis.com [omitted]
+[info] ✔  functions: required API cloudbuild.googleapis.com is enabled 
+[debug] [2024-04-08T15:54:50.466Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/artifactregistry.googleapis.com 200
+[debug] [2024-04-08T15:54:50.466Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/artifactregistry.googleapis.com [omitted]
+[info] ✔  artifactregistry: required API artifactregistry.googleapis.com is enabled 
+[debug] [2024-04-08T15:54:50.467Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f/adminSdkConfig [none]
+[debug] [2024-04-08T15:54:50.638Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f/adminSdkConfig 200
+[debug] [2024-04-08T15:54:50.638Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/hide-and-seek-1045f/adminSdkConfig {"projectId":"hide-and-seek-1045f","storageBucket":"hide-and-seek-1045f.appspot.com"}
+[debug] [2024-04-08T15:54:50.639Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/hide-and-seek-1045f/configs [none]
+[debug] [2024-04-08T15:54:50.860Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/hide-and-seek-1045f/configs 200
+[debug] [2024-04-08T15:54:50.860Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/hide-and-seek-1045f/configs {}
+[debug] [2024-04-08T15:54:50.862Z] Validating nodejs source
+[debug] [2024-04-08T15:54:51.260Z] > [functions] package.json contents: {
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "npm run build && firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.25.4",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^4.9.0"
+  },
+  "private": true
+}
+[debug] [2024-04-08T15:54:51.261Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2024-04-08T15:54:51.261Z] Could not find functions.yaml. Must use http discovery
+[debug] [2024-04-08T15:54:51.265Z] Found firebase-functions binary at '/Users/eankrenzin/Documents/Github/hide-and-seek/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8535
+
+[debug] [2024-04-08T15:54:51.447Z] Got response from /__/functions.yaml {"endpoints":{"helloWorld":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"helloWorld"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged /Users/eankrenzin/Documents/Github/hide-and-seek/functions (88.37 KB) for uploading 
+[debug] [2024-04-08T15:54:56.475Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/hide-and-seek-1045f/locations/-/functions [none]
+[debug] [2024-04-08T15:54:56.996Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/hide-and-seek-1045f/locations/-/functions 200
+[debug] [2024-04-08T15:54:56.997Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/hide-and-seek-1045f/locations/-/functions {}
+[debug] [2024-04-08T15:54:56.998Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/hide-and-seek-1045f/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2024-04-08T15:54:57.743Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/hide-and-seek-1045f/locations/-/functions 200
+[debug] [2024-04-08T15:54:57.743Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/hide-and-seek-1045f/locations/-/functions {}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[debug] [2024-04-08T15:54:57.749Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com [none]
+[debug] [2024-04-08T15:54:57.749Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:57.752Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com [none]
+[debug] [2024-04-08T15:54:57.752Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:57.754Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/pubsub.googleapis.com [none]
+[debug] [2024-04-08T15:54:57.754Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/pubsub.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:57.756Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/storage.googleapis.com [none]
+[debug] [2024-04-08T15:54:57.756Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/storage.googleapis.com x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:58.251Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com 200
+[debug] [2024-04-08T15:54:58.252Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API run.googleapis.com. Enabling now... 
+[debug] [2024-04-08T15:54:58.253Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com:enable [none]
+[debug] [2024-04-08T15:54:58.253Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com:enable x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:58.255Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/pubsub.googleapis.com 200
+[debug] [2024-04-08T15:54:58.255Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/pubsub.googleapis.com [omitted]
+[info] ✔  functions: required API pubsub.googleapis.com is enabled 
+[debug] [2024-04-08T15:54:58.256Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com 200
+[debug] [2024-04-08T15:54:58.256Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API eventarc.googleapis.com. Enabling now... 
+[debug] [2024-04-08T15:54:58.256Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com:enable [none]
+[debug] [2024-04-08T15:54:58.256Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com:enable x-goog-quota-user=projects/hide-and-seek-1045f
+[debug] [2024-04-08T15:54:58.257Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/storage.googleapis.com 200
+[debug] [2024-04-08T15:54:58.257Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/storage.googleapis.com [omitted]
+[info] ✔  functions: required API storage.googleapis.com is enabled 
+[debug] [2024-04-08T15:54:58.839Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com:enable 200
+[debug] [2024-04-08T15:54:58.840Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/eventarc.googleapis.com:enable [omitted]
+[debug] [2024-04-08T15:54:58.857Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com:enable 200
+[debug] [2024-04-08T15:54:58.857Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/hide-and-seek-1045f/services/run.googleapis.com:enable [omitted]
