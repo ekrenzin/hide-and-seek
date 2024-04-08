@@ -1,19 +1,34 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { onCall } from 'firebase-functions/v2/https';
+import * as admin from 'firebase-admin';
 
-import { onRequest } from 'firebase-functions/v2/https';
-import * as logger from 'firebase-functions/logger';
+// Ensure Firebase Admin SDK is initialized
+const app = admin.initializeApp();
+const db = app.firestore();
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+// Function to generate a unique lobby code
+function generateLobbyCode(length = 6): string {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	let result = '';
+	const charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
 
-export const helloWorld = onRequest((request, response) => {
-	logger.info('Hello logs!', { structuredData: true });
-	response.send('Hello from Firebase!');
+interface CreateLobbyResponse {
+	lobbyCode: string;
+}
+
+// Define the `createLobby` function
+export const createLobby = onCall<CreateLobbyResponse>(async (data, context) => {
+	const lobbyCode = generateLobbyCode();
+
+	// Store the lobby code in Firestore
+	await db.collection('lobbies').doc(lobbyCode).set({
+		createdAt: admin.firestore.FieldValue.serverTimestamp()
+	});
+
+	// Return the lobby code to the caller
+	return { lobbyCode };
 });
