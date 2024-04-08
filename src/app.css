@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.big-button {
+    border-radius: 2rem;
+    padding: 1rem 2rem;
+    outline: none;
+    border: none;
+    font-weight: 900;
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: white;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.centered {
+    align-items: center;
+    justify-content: center;
+}
+
+input {
+    color: black;
+}
