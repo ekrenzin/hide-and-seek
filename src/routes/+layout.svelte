@@ -1,9 +1,15 @@
 <script lang="ts">
 	import '../app.css';
 	import '../fonts.css';
+	import { authInitiated } from '$lib/utils/firebase';
+	import Loading from '$lib/components/Loading.svelte';
 </script>
 
-<slot />
+{#if authInitiated}
+	<slot />
+{:else}
+	<Loading size="lg" color="blue" />
+{/if}
 <svelte:head
 	><link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

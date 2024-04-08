@@ -1,4 +1,4 @@
-import { onCall } from 'firebase-functions/v2/https';
+import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 
 // Ensure Firebase Admin SDK is initialized
@@ -16,17 +16,21 @@ function generateLobbyCode(length = 6): string {
 	return result;
 }
 
-interface CreateLobbyResponse {
-	lobbyCode: string;
-}
-
 // Define the `createLobby` function
-export const createLobby = onCall<CreateLobbyResponse>(async (data, context) => {
+export const createGame = onCall(async (request: CallableRequest) => {
+	const { auth, data } = request;
+	if (!auth) {
+		throw new Error('Authentication required');
+	}
 	const lobbyCode = generateLobbyCode();
-
 	// Store the lobby code in Firestore
 	await db.collection('lobbies').doc(lobbyCode).set({
-		createdAt: admin.firestore.FieldValue.serverTimestamp()
+		createdAt: Date.now()
+	});
+
+	//add the user to the lobby
+	await db.collection('lobbies').doc(lobbyCode).collection('users').doc(auth.uid).set({
+		createdAt: Date.now()
 	});
 
 	// Return the lobby code to the caller

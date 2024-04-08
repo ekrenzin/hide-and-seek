@@ -3,6 +3,8 @@ import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { writable } from 'svelte/store';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyBGsdXioGTf7_ocemK1qhkOIZA5gvhcvzM',
@@ -19,12 +21,21 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const functions = getFunctions(app);
+const auth = getAuth();
+const isEmulating = true;
+const user: any = writable(null);
+const authInitiated: any = writable(false);
 
-if (location.origin.indexOf('localhost') > -1) {
+onAuthStateChanged(auth, (_user) => {
+	user.set(_user);
+	authInitiated.set(true);
+});
+
+if (isEmulating) {
 	console.log('pointing to emulator');
 	// connectFirestoreEmulator(firestore, 'localhost', 8082)
-	connectFunctionsEmulator(functions, 'localhost', 8080);
+	connectFunctionsEmulator(functions, 'localhost', 8081);
 	// connectAuthEmulator(auth, 'http://localhost:9099')
 }
 
-export { app, analytics, db, functions };
+export { app, analytics, db, functions, auth, user, authInitiated };

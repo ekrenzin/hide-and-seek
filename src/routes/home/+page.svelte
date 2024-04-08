@@ -1,32 +1,28 @@
 <script lang="ts">
 	import Title from '$lib/components/Title.svelte';
-	import { functions } from '$lib/utils/firebase';
+	import { functions, user, authInitiated, auth } from '$lib/utils/firebase';
 	import { httpsCallable } from 'firebase/functions';
+	import { signOut } from 'firebase/auth';
 
-	let name: HTMLInputElement;
 	let code: HTMLInputElement;
 	let joining = false;
 
+	user.subscribe((user) => {
+		if (!$authInitiated) return;
+		if (!user) {
+			window.location.href = '/login';
+		}
+	});
+
 	async function createGame() {
 		console.log('create game');
-		if (!checkName()) return;
 		const code = await httpsCallable(functions, 'createGame')();
 		console.log(code);
 	}
 
 	function joinGame() {
 		console.log('join game');
-		if (!checkName()) return;
 		if (!checkCode()) return;
-	}
-
-	function checkName() {
-		return true;
-		if (name.value === '') {
-			alert('Please enter your name');
-			return false;
-		}
-		return true;
 	}
 
 	function checkCode() {
@@ -45,14 +41,6 @@
 
 	{#if joining}
 		<div class="flex flex-col gap-4 justify-center items-center">
-			<label for="name">Enter your name:</label>
-			<input
-				bind:this={name}
-				type="text"
-				id="name"
-				name="name"
-				class="border-2 border-gray-300 p-2 rounded-md"
-			/>
 			<label for="name">Enter Lobby Code:</label>
 			<input
 				bind:this={code}
@@ -72,17 +60,6 @@
 			</button>
 		</div>
 	{:else}
-		<div class="flex flex-col justify-center items-center">
-			<label for="name">Enter your name:</label>
-			<input
-				bind:this={name}
-				type="text"
-				id="name"
-				name="name"
-				class="border-2 border-gray-300 p-2 rounded-md"
-			/>
-		</div>
-
 		<div class="flex flex-col justify-center items-center space-y-4">
 			<button class="big-button bg-green-500 hover:bg-green-600" on:click={() => (joining = true)}>
 				Join Game
@@ -92,6 +69,9 @@
 			</button>
 		</div>
 	{/if}
+	<button class="small-button bg-blue-500 hover:bg-blue-600" on:click={() => signOut(auth)}>
+		Log Out
+	</button>
 </div>
 
 <style>
