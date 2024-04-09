@@ -35,7 +35,8 @@ export const createGame = onCall(async (request: CallableRequest) => {
 		color: getRandomVibrantColor(),
 		uid: auth.uid,
 		name: auth.token.name,
-		role: 'hider'
+		role: 'hider',
+		icon: auth.token.picture
 	});
 
 	// Return the lobby code to the caller
@@ -47,6 +48,7 @@ export const joinGame = onCall(async (request: CallableRequest) => {
 	if (!auth) {
 		throw new Error('Authentication required');
 	}
+	console.log(auth);
 	const { lobbyCode } = data;
 	// Check if the lobby exists
 	const lobby = await db.collection('lobbies').doc(lobbyCode).get();
@@ -60,7 +62,8 @@ export const joinGame = onCall(async (request: CallableRequest) => {
 		color: getRandomVibrantColor(),
 		uid: auth.uid,
 		name: auth.token.name,
-		role: 'hider'
+		role: 'hider',
+		icon: auth.token.picture
 	});
 	// Return the lobby code to the caller
 	return { lobbyCode };
@@ -135,7 +138,7 @@ export const markFound = onCall(async (request: CallableRequest) => {
 	const { lobbyCode } = data;
 	const uid = auth.uid;
 	// Check if the lobby exists
-	const lobby = await db.collection('lobbies').doc(lobbyCode).get();
+	const lobby = await db.collection('lobbies').doc(lobbyCode.toUpperCase()).get();
 	if (!lobby.exists) {
 		throw new Error('Lobby not found');
 	}

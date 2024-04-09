@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { authInitiated, user } from '$lib/utils/firebase';
-	import { LoadingStatus } from '$lib/utils/store';
+	import { LoadingStatus } from '../store';
 	import Loading from '$lib/components/Loading.svelte';
 	import { goto } from '$app/navigation';
 	import '../app.css';

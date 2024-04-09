@@ -67,6 +67,7 @@
 		text-transform: uppercase;
 	}
 	.bar {
+		background-color: black;
 		padding: 0.5rem;
 		width: 100%;
 		height: 125px;

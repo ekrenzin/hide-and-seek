@@ -13,6 +13,7 @@ interface UserCircle {
 	uid: string;
 	role: string;
 	status: string;
+	icon?: string;
 }
 
 interface MarkerOptions {

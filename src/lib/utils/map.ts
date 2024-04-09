@@ -84,7 +84,8 @@ async function createNewCircles(map: GoogleMap, circles: UserCircle[]) {
 			deadCircle.color = '#000000';
 
 			const newCircle = createCircle(deadCircle);
-			const skullMarker = createLabel(newCircle, skull);
+			const skullMarker = await createLabel(newCircle, skull);
+			console.log('skullMarker', skullMarker);
 			const skullMarkerId = await map.addMarker(skullMarker);
 			markerIds.push({
 				id: skullMarkerId,
@@ -94,7 +95,7 @@ async function createNewCircles(map: GoogleMap, circles: UserCircle[]) {
 			});
 		} else {
 			const circleData = createCircle(circle);
-			const markerData = createLabel(circleData);
+			const markerData = await createLabel(circleData, circle.icon);
 			const markerId = await map.addMarker(markerData);
 			const circleId = await map.addCircles([circleData]);
 			markerIds.push({
@@ -140,32 +141,22 @@ function createCircle(circle: UserCircle): Circle {
 			lat: circle.circle.latitude || circle.circle.lat,
 			lng: circle.circle.longitude || circle.circle.lng
 		},
+		fillOpacity: 0.5,
 		title: circle.name,
 		radius: 50,
 		fillColor: `${circle.color}`,
-		strokeColor: `${circle.color}40`,
+		strokeColor: `${circle.color}`,
 		visible: true
 	};
 }
 
-function createLabel(circle: Circle, iconUrl?: string): Marker {
-	const initials = circle.title
-		.split(' ')
-		.map((namePart) => namePart[0])
-		.join('')
-		.toUpperCase();
-	const svgIcon = `
-        <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">
-            <text x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" fill="#000" font-size="32" font-weight="900" font-family="Poppins" dy=".3em">${initials}</text>
-        </svg>`;
-
-	// Convert SVG string to a URL that can be used as an icon
-	const svgIconUrl = `data:image/svg+xml;charset=UTF-8;base64,${btoa(svgIcon)}`;
+async function createLabel(circle: Circle, iconUrl?: string): Marker {
+	console.log('createLabel', circle, iconUrl);
 	return {
-		iconUrl: iconUrl || svgIconUrl,
+		iconUrl: iconUrl,
 		coordinate: circle.center,
 		iconOrigin: { x: 0, y: 0 },
-		iconAnchor: { x: 25, y: 25 }
+		iconAnchor: { x: 35, y: 35 }
 	};
 }
 

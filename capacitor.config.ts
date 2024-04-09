@@ -7,6 +7,13 @@ const config: CapacitorConfig = {
 	server: {
 		androidScheme: 'https'
 	},
+	plugins: {
+		FirebaseAuthentication: {
+			skipNativeAuth: false,
+			providers: ['apple.com', 'facebook.com', 'google.com']
+		}
+	},
+
 	bundledWebRuntime: false
 };
 

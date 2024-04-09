@@ -4,7 +4,7 @@
 	import { httpsCallable } from 'firebase/functions';
 	import { functions } from '$lib/utils/firebase';
 	import { LobbyCode } from '$lib/utils/game';
-	import { LoadingStatus } from '$lib/utils/store';
+	import { LoadingStatus } from '../../store';
 	import { goto } from '$app/navigation';
 
 	LobbyCode.subscribe((code) => {

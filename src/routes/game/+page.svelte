@@ -5,9 +5,9 @@
 	import { user } from '$lib/utils/firebase';
 	import { loadMap, drawRangeCircles, Map } from '$lib/utils/map';
 	import { LobbyUsers } from '$lib/utils/game';
+	import { LoadingStatus } from '../../store';
 	import type { UserCircle } from '$lib/types';
 	import type { Position } from '@capacitor/geolocation';
-	import Loading from '$lib/components/Loading.svelte';
 
 	let mapRef: HTMLDivElement;
 	let isLoading = true;
@@ -15,8 +15,12 @@
 	let startTimeout: any;
 
 	onMount(async () => {
-		isLoading = true;
-		await startGame();
+		LoadingStatus.set(true);
+		try {
+			await startGame();
+		} catch (e) {
+			console.error(e);
+		}
 	});
 
 	onDestroy(() => {
@@ -24,40 +28,44 @@
 	});
 
 	async function startGame() {
-		if (startTimeout) clearTimeout(startTimeout);
-		const pos = await startLocationTracking();
-		if (!pos) {
-			console.error('No position');
-			//try again in 3 seconds
-			startTimeout = setTimeout(startGame, 3000);
-			return;
-		}
-		const map = (await loadMap(mapRef, pos)) || $Map;
-		if (!map) {
-			console.warn('No map');
-			//try again in 3 seconds
-			startTimeout = setTimeout(startGame, 3000);
-			return;
-		}
+		try {
+			if (startTimeout) clearTimeout(startTimeout);
+			const pos = await startLocationTracking();
+			if (!pos) {
+				console.error('No position');
+				//try again in 3 seconds
+				startTimeout = setTimeout(startGame, 3000);
+				return;
+			}
+			const map = (await loadMap(mapRef, pos)) || $Map;
+			if (!map) {
+				console.warn('No map');
+				//try again in 3 seconds
+				startTimeout = setTimeout(startGame, 3000);
+				return;
+			}
 
-		console.log('Map loaded');
+			console.log('Map loaded');
 
-		lobbyUsersSubscription = LobbyUsers.subscribe((users) => {
-			if (!users) return;
-			isLoading = false;
-			//get the position from the users
-			const userCircles: UserCircle[] = users.map((user) => {
-				const coords = {
-					latitude: user.position.latitude,
-					longitude: user.position.longitude
-				};
-				return {
-					...user,
-					position: { coords }
-				};
+			lobbyUsersSubscription = LobbyUsers.subscribe((users) => {
+				if (!users) return;
+				LoadingStatus.set(false);
+				//get the position from the users
+				const userCircles: UserCircle[] = users.map((user) => {
+					const coords = {
+						latitude: user.position.latitude,
+						longitude: user.position.longitude
+					};
+					return {
+						...user,
+						position: { coords }
+					};
+				});
+				drawRangeCircles(map, userCircles);
 			});
-			drawRangeCircles(map, userCircles);
-		});
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	function unMount() {
@@ -81,21 +89,16 @@
 	}
 </script>
 
-<div class="map" bind:this={mapRef}>
-	{#if isLoading}
-		<Loading />
-	{/if}
-</div>
+<capacitor-google-map id="map" class="map" bind:this={mapRef}> </capacitor-google-map>
 <BottomBar />
 
 <style>
 	.map {
+		display: inline-block;
 		background-color: #212529;
-		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: calc(100vh - 125px);
-		width: 100%;
-		z-index: 10;
+		height: calc(100vh);
+		width: 100vw;
 	}
 </style>

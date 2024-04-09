@@ -38,6 +38,8 @@
 	"type": "module",
 	"dependencies": {
 		"@capacitor-community/background-geolocation": "^1.2.17",
+		"@capacitor-firebase/app": "^5.4.1",
+		"@capacitor-firebase/authentication": "^5.4.1",
 		"@capacitor/android": "^5.7.4",
 		"@capacitor/cli": "^5.7.4",
 		"@capacitor/core": "^5.7.4",

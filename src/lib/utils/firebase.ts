@@ -3,8 +3,25 @@ import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { writable } from 'svelte/store';
+import { Capacitor } from '@capacitor/core';
+import { getApp } from 'firebase/app';
+import {
+	getAuth,
+	indexedDBLocalPersistence,
+	initializeAuth,
+	onAuthStateChanged
+} from 'firebase/auth';
+
+const getFirebaseAuth = () => {
+	if (Capacitor.isNativePlatform()) {
+		return initializeAuth(getApp(), {
+			persistence: indexedDBLocalPersistence
+		});
+	} else {
+		return getAuth();
+	}
+};
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyBGsdXioGTf7_ocemK1qhkOIZA5gvhcvzM',
@@ -21,21 +38,22 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const functions = getFunctions(app);
-const auth = getAuth();
+const auth = getFirebaseAuth();
 const isEmulating = window.location.href.includes('localhost');
 const user: any = writable(null);
 const authInitiated: any = writable(false);
 
 onAuthStateChanged(auth, (_user) => {
 	user.set(_user);
+	console.log('auth initiated', _user);
 	authInitiated.set(true);
 });
 
 if (isEmulating) {
 	console.log('pointing to emulator');
 	// connectFirestoreEmulator(db, 'localhost', 8082);
-	connectFunctionsEmulator(functions, 'localhost', 8081);
+	// connectFunctionsEmulator(functions, 'localhost', 8081);
 	// connectAuthEmulator(auth, 'http://localhost:9099')
 }
 
-export { app, analytics, db, functions, auth, user, authInitiated };
+export { app, analytics, db, functions, auth, getFirebaseAuth, user, authInitiated };

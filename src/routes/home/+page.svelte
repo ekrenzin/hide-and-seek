@@ -2,9 +2,9 @@
 	import Title from '$lib/components/Title.svelte';
 	import { functions, user, authInitiated, auth } from '$lib/utils/firebase';
 	import { httpsCallable } from 'firebase/functions';
-	import { signOut } from 'firebase/auth';
+	import { logOut } from '$lib/utils/login';
 	import { LobbyCode } from '$lib/utils/game';
-	import { LoadingStatus } from '$lib/utils/store';
+	import { LoadingStatus } from '../../store';
 	import { goto } from '$app/navigation';
 
 	let code: string = '';
@@ -101,9 +101,7 @@
 			</button>
 		</div>
 	{/if}
-	<button class="small-button bg-gray-100 hover:bg-gray-200" on:click={() => signOut(auth)}>
-		Log Out
-	</button>
+	<button class="small-button bg-gray-100 hover:bg-gray-200" on:click={logOut}> Log Out </button>
 </div>
 
 <style>
