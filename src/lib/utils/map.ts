@@ -1,21 +1,24 @@
 import { GoogleMap } from '@capacitor/google-maps';
 import { generateMapStyles } from '$lib/utils/mapStyles';
 import { writable, get } from 'svelte/store';
+import skull from '$lib/assets/skull.png';
 import type { UserCircle } from '$lib/types';
 import type { Marker, Circle } from '@capacitor/google-maps';
 import type { Position } from '@capacitor/geolocation';
 
 const apiKey = 'AIzaSyAS-peBvelhZvcx8rfvOMq6BK7LlSioF_8';
 
+const Map = writable<GoogleMap | null>(null);
+const Markers = writable<any[]>([]);
+const Circles = writable<any[]>([]);
+
 async function loadMap(mapRef: HTMLDivElement, pos: Position) {
-	console.log('Loading map');
 	const existingMap = get(Map);
 	if (existingMap) return existingMap;
 
 	if (!mapRef) return;
 	const styles = generateMapStyles();
 	try {
-		console.log('Creating map');
 		const map = await GoogleMap.create({
 			id: 'game-map',
 			element: mapRef,
@@ -39,56 +42,115 @@ async function loadMap(mapRef: HTMLDivElement, pos: Position) {
 }
 
 async function drawRangeCircles(map: GoogleMap, circles: UserCircle[]) {
+	//remove all existing markers and circles
+	const existingCircles = get(Circles);
+	const existingMarkers = get(Markers);
+
+	for (const circle of existingCircles) {
+		try {
+			map.removeCircles(circle.id);
+			//remove from store
+			Circles.update((circles) => circles.filter((c) => c.id !== circle.id));
+		} catch (error) {
+			console.error('Error removing circle', error);
+		}
+	}
+	for (const marker of existingMarkers) {
+		try {
+			map.removeMarker(marker.id);
+			//remove from store
+			Markers.update((markers) => markers.filter((m) => m.id !== marker.id));
+		} catch (error) {
+			console.error('Error removing marker', error);
+		}
+	}
+	console.log('Circles and markers removed, creating new ones', circles);
+	await createNewCircles(map, circles);
+}
+
+async function createNewCircles(map: GoogleMap, circles: UserCircle[]) {
+	if (circles.length === 0) return;
+
 	const markerIds: any[] = [];
 	const circleIds: any[] = [];
+
 	for (const circle of circles) {
+		console.log('Creating new circle:', circle);
+		// testingCircle(circle, map);
 		//add random offset to the circle position
-		const center = {
-			lat:
-				circle.position.coords.latitude +
-				(Math.random() - 0.5) * 0.001 * (Math.random() < 0.5 ? -1 : 1),
-			lng:
-				circle.position.coords.longitude +
-				(Math.random() - 0.5) * 0.001 * (Math.random() < 0.5 ? -1 : 1)
-		};
-		circle.center = center;
-		const markerId = await map.addMarker(createLabel(circle));
-		const circleId = await map.addCircles([createCircle(circle)]);
+		const circleData = createCircle(circle);
+		const markerData = createLabel(circleData);
 
-		//add true center for testing
-		const trueCenter = {
-			lat: circle.position.coords.latitude,
-			lng: circle.position.coords.longitude
-		};
-		const trueCircleId = await map.addCircles([
-			{
-				center: trueCenter,
-				radius: 10,
-				fillColor: '#FF0000',
-				strokeColor: '#FF000040',
-				visible: true
-			}
-		]);
+		if (circle.status === 'found') {
+			//add skull marker
+			const deadCircle = circle;
+			if (!deadCircle.foundPosition) return;
 
-		markerIds.push({ id: markerId, uid: circle.uid });
-		circleIds.push({ id: circleId, uid: circle.uid });
+			deadCircle.position = { coords: circle.foundPosition };
+			deadCircle.color = '#000000';
+
+			const newCircle = createCircle(deadCircle, false);
+			const skullMarker = createLabel(newCircle, skull);
+			const skullMarkerId = await map.addMarker(skullMarker);
+			markerIds.push({
+				id: skullMarkerId,
+				uid: deadCircle.uid,
+				position: deadCircle.position,
+				color: newCircle.fillColor
+			});
+		} else {
+			const markerId = await map.addMarker(markerData);
+			const circleId = await map.addCircles([circleData]);
+			console.log('Adding circle:', circleData, markerData);
+			markerIds.push({
+				id: markerId,
+				uid: circle.uid,
+				position: circle.position,
+				color: circleData.fillColor
+			});
+			circleIds.push({
+				id: circleId,
+				uid: circle.uid,
+				position: circle.position,
+				color: circleData.fillColor
+			});
+		}
 	}
-	return { circleIds, markerIds };
+	// Add the new markers and circles to the store
+	Markers.update((markers) => [...markers, ...markerIds]);
+	Circles.update((circles) => [...circles, ...circleIds]);
+}
+
+async function testingCircle(circle: UserCircle, map: GoogleMap) {
+	//add true center for testing
+	const trueCenter = {
+		lat: circle.position.coords.latitude,
+		lng: circle.position.coords.longitude
+	};
+	const trueCircleId = await map.addCircles([
+		{
+			center: trueCenter,
+			radius: 10,
+			fillColor: '#FF0000',
+			strokeColor: '#FF000040',
+			visible: true
+		}
+	]);
 }
 
 function createCircle(circle: UserCircle): Circle {
-	const randomColor = getRandomVibrantColor();
 	return {
-		center: circle.center,
+		center: circle.circle,
+		title: circle.name,
 		radius: 100,
-		fillColor: `${randomColor}`,
-		strokeColor: `${randomColor}40`,
+		fillColor: `${circle.color}`,
+		strokeColor: `${circle.color}40`,
 		visible: true
 	};
 }
 
-function createLabel(circle: UserCircle): Marker {
-	const initials = circle.name
+function createLabel(circle: Circle, iconUrl?: string): Marker {
+	const initials = circle.title
 		.split(' ')
 		.map((namePart) => namePart[0])
 		.join('')
@@ -100,38 +162,12 @@ function createLabel(circle: UserCircle): Marker {
 
 	// Convert SVG string to a URL that can be used as an icon
 	const svgIconUrl = `data:image/svg+xml;charset=UTF-8;base64,${btoa(svgIcon)}`;
-
 	return {
-		iconUrl: svgIconUrl,
+		iconUrl: iconUrl || svgIconUrl,
 		coordinate: circle.center,
 		iconOrigin: { x: 0, y: 0 },
 		iconAnchor: { x: 25, y: 25 }
 	};
 }
-
-function hslToHex(h: number, s: number, l: number): string {
-	l /= 100;
-	const a = (s * Math.min(l, 1 - l)) / 100;
-	const f = (n: number) => {
-		const k = (n + h / 30) % 12;
-		const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-		return Math.round(255 * color)
-			.toString(16)
-			.padStart(2, '0'); // Convert to Hex and format
-	};
-	return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-function getRandomVibrantColor(): string {
-	// Generate vibrant color in HSL and convert to Hex
-	const h = Math.floor(Math.random() * 360); // Hue between 0 and 359
-	const s = 75 + Math.floor(Math.random() * 25); // Saturation between 75% and 100%
-	const l = 50 + Math.floor(Math.random() * 10); // Lightness between 50% and 60%
-	return hslToHex(h, s, l);
-}
-
-const Map = writable<GoogleMap | null>(null);
-const Markers = writable<Marker[]>([]);
-const Circles = writable<Circle[]>([]);
 
 export { Map, loadMap, drawRangeCircles };

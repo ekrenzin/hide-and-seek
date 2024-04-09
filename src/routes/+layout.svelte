@@ -1,15 +1,22 @@
 <script lang="ts">
+	import { authInitiated, user } from '$lib/utils/firebase';
+	import { LoadingStatus } from '$lib/utils/store';
+	import Loading from '$lib/components/Loading.svelte';
+	import { goto } from '$app/navigation';
 	import '../app.css';
 	import '../fonts.css';
-	import { authInitiated } from '$lib/utils/firebase';
-	import Loading from '$lib/components/Loading.svelte';
+
+	authInitiated.subscribe((initiated: boolean) => {
+		if (!initiated) return;
+		console.log('auth initiated');
+		user.subscribe((usr: any) => {
+			if (!usr) {
+				goto('/login');
+			}
+		});
+	});
 </script>
 
-{#if authInitiated}
-	<slot />
-{:else}
-	<Loading size="lg" color="blue" />
-{/if}
 <svelte:head
 	><link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,6 +25,33 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
+{#if $LoadingStatus}
+	<div class="loading-wrapper">
+		<Loading />
+	</div>
+{/if}
+{#if authInitiated}
+	<slot />
+{:else}
+	<Loading />
+{/if}
 
 <style>
+	.app-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: fle;
+		align-items: center;
+		height: 100vh;
+	}
+
+	.loading-wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 1000;
+	}
 </style>

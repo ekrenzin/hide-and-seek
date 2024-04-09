@@ -2,13 +2,6 @@
 	import Title from '$lib/components/Title.svelte';
 	import { signin } from '$lib/utils/login';
 	import { user } from '$lib/utils/firebase';
-
-	user.subscribe((user) => {
-		//if user redirect to /
-		if (user) {
-			window.location.href = '/';
-		}
-	});
 </script>
 
 <div class="wrapper flex flex-col h-screen justify-between items-center py-4">

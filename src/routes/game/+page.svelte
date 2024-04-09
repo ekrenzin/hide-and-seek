@@ -2,68 +2,80 @@
 	import { onMount, onDestroy } from 'svelte';
 	import BottomBar from '$lib/components/hideAndSeek/BottomBar.svelte';
 	import { startLocationTracking, stopLocationTracking, UserPosition } from '$lib/utils/location';
-	import { loadMap, drawRangeCircles } from '$lib/utils/map';
+	import { user } from '$lib/utils/firebase';
+	import { loadMap, drawRangeCircles, Map } from '$lib/utils/map';
+	import { LobbyUsers } from '$lib/utils/game';
 	import type { UserCircle } from '$lib/types';
 	import type { Position } from '@capacitor/geolocation';
+	import Loading from '$lib/components/Loading.svelte';
 
 	let mapRef: HTMLDivElement;
 	let isLoading = true;
-	let trackUser: () => void;
+	let lobbyUsersSubscription: () => void;
+
 	onMount(async () => {
 		isLoading = true;
-		await startLocationTracking();
-		trackUser = UserPosition.subscribe(async (pos) => {
-			console.log('User position', pos);
-			isLoading = true;
-			if (!pos) return;
-			const map = await loadMap(mapRef, pos);
-			if (!map) return;
-			console.log('Map loaded', map);
-			const circles: UserCircle[] = [
-				{ position: pos, name: 'Ean Krenzin', uid: '1654512656423566512' },
-				{ position: createTestPosition(pos), name: 'Test User', uid: '232323' },
-				{ position: createTestPosition(pos), name: 'New Account', uid: '232374723as' }
-			];
-			drawRangeCircles(map, circles);
-			isLoading = false;
-		});
-		return unMount();
+		await startGame();
 	});
 
 	onDestroy(() => {
 		unMount();
 	});
 
+	async function startGame() {
+		const pos = await startLocationTracking();
+		if (!pos) {
+			console.error('No position');
+			//try again in 3 seconds
+			setTimeout(startGame, 3000);
+			return;
+		}
+		const map = await loadMap(mapRef, pos);
+		if (!map) {
+			console.error('No map');
+			//try again in 3 seconds
+			setTimeout(startGame, 3000);
+			return;
+		}
+
+		console.log('Map loaded');
+
+		lobbyUsersSubscription = LobbyUsers.subscribe((users) => {
+			if (!users) return;
+			isLoading = false;
+			//get the position from the users
+			const userCircles: UserCircle[] = users.map((user) => {
+				const coords = {
+					latitude: user.position.latitude,
+					longitude: user.position.longitude
+				};
+				return {
+					...user,
+					position: { coords }
+				};
+			});
+			drawRangeCircles(map, userCircles);
+		});
+	}
+
 	function unMount() {
-		trackUser();
-		stopLocationTracking();
+		try {
+			stopLocationTracking();
+		} catch (e) {
+			console.error(e);
+		}
+
+		try {
+			lobbyUsersSubscription();
+		} catch (e) {
+			console.error(e);
+		}
 	}
-
-	function createTestPosition(startPos: Position): Position {
-		// Clone the startPos.coords object and modify its properties
-		//random sign to add or subtract
-		const newCoords = {
-			...startPos.coords,
-			latitude: startPos.coords.latitude + Math.random() * 0.01 * (Math.random() < 0.5 ? -1 : 1),
-			longitude: startPos.coords.longitude + Math.random() * 0.01 * (Math.random() < 0.5 ? -1 : 1)
-		};
-
-		// Return a new Position-like object with the updated coordinates
-		return {
-			...startPos,
-			coords: newCoords
-		};
-	}
-
-	$: console.log({ isLoading });
 </script>
 
 <div class="map" bind:this={mapRef}>
 	{#if isLoading}
-		<div class="absolute inset-0 flex items-center justify-center">
-			<!-- Spinner using Tailwind CSS -->
-			<div class="w-32 h-32 border-4 border-white border-dotted rounded-full animate-spin"></div>
-		</div>
+		<Loading />
 	{/if}
 </div>
 <BottomBar />
@@ -76,5 +88,6 @@
 		align-items: center;
 		height: calc(100vh - 125px);
 		width: 100%;
+		z-index: 10;
 	}
 </style>

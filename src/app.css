@@ -26,6 +26,7 @@ body {
     width: 200px;
 }
 
+
 .small-button {
     border-radius: 2rem;
     padding: 0.125rem 0.5rem;
@@ -35,7 +36,6 @@ body {
     font-size: 1.25rem;
     text-decoration: none;
     color: black;
-    background: white;
 }
 
 .flex-column {

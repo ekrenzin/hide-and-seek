@@ -3,30 +3,62 @@
 	import { functions, user, authInitiated, auth } from '$lib/utils/firebase';
 	import { httpsCallable } from 'firebase/functions';
 	import { signOut } from 'firebase/auth';
+	import { LobbyCode } from '$lib/utils/game';
+	import { LoadingStatus } from '$lib/utils/store';
+	import { goto } from '$app/navigation';
 
-	let code: HTMLInputElement;
+	let code: string = '';
 	let joining = false;
 
-	user.subscribe((user) => {
-		if (!$authInitiated) return;
-		if (!user) {
-			window.location.href = '/login';
-		}
+	LobbyCode.subscribe((c) => {
+		code = c;
 	});
 
 	async function createGame() {
-		console.log('create game');
-		const code = await httpsCallable(functions, 'createGame')();
-		console.log(code);
+		LoadingStatus.set(true);
+		try {
+			const code = await httpsCallable(functions, 'createGame')();
+			if (!code) return;
+			console.log(code);
+			LobbyCode.set(code.data.lobbyCode);
+			//redirect to game page
+			redirectLobby();
+		} catch (e) {
+			console.error(e);
+		}
+		LoadingStatus.set(false);
 	}
 
-	function joinGame() {
-		console.log('join game');
+	async function joinGame() {
 		if (!checkCode()) return;
+		LoadingStatus.set(true);
+		try {
+			await httpsCallable(
+				functions,
+				'joinGame'
+			)({
+				lobbyCode: code
+			});
+			LobbyCode.set(code);
+			//redirect to game page
+			redirectLobby();
+		} catch (e) {
+			console.error(e);
+			alert('Invalid lobby code');
+		}
+		LoadingStatus.set(false);
+	}
+
+	function redirectLobby() {
+		goto('/lobby');
+	}
+
+	function redirectGame() {
+		goto('/game');
 	}
 
 	function checkCode() {
-		if (code.value === '') {
+		if (code === '') {
 			alert('Please enter a lobby code');
 			return false;
 		}
@@ -43,7 +75,7 @@
 		<div class="flex flex-col gap-4 justify-center items-center">
 			<label for="name">Enter Lobby Code:</label>
 			<input
-				bind:this={code}
+				bind:value={code}
 				type="text"
 				id="name"
 				name="name"
@@ -69,7 +101,7 @@
 			</button>
 		</div>
 	{/if}
-	<button class="small-button bg-blue-500 hover:bg-blue-600" on:click={() => signOut(auth)}>
+	<button class="small-button bg-gray-100 hover:bg-gray-200" on:click={() => signOut(auth)}>
 		Log Out
 	</button>
 </div>
