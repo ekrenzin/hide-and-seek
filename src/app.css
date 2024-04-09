@@ -24,6 +24,8 @@ body {
     text-decoration: none;
     color: white;
     width: 200px;
+    /* prevent text select */
+    user-select: none;
 }
 
 

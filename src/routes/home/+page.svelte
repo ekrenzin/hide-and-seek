@@ -6,6 +6,7 @@
 	import { LobbyCode } from '$lib/utils/game';
 	import { LoadingStatus } from '../../store';
 	import { goto } from '$app/navigation';
+	import Button from '$lib/components/Button.svelte';
 
 	let code: string = '';
 	let joining = false;
@@ -84,24 +85,32 @@
 		</div>
 
 		<div class="flex flex-col justify-center items-center space-y-4">
-			<button class="big-button bg-green-500 hover:bg-green-600" on:click={joinGame}>
+			<Button type="big" classList="bg-green-500 hover:bg-green-600" onClick={joinGame}>
 				Join Game
-			</button>
-			<button class="big-button bg-gray-500 hover:bg-gray-600" on:click={() => (joining = false)}>
+			</Button>
+			<Button
+				type="big"
+				classList="bg-gray-500 hover:bg-gray-600"
+				onClick={() => (joining = false)}
+			>
 				Go Back
-			</button>
+			</Button>
 		</div>
 	{:else}
 		<div class="flex flex-col justify-center items-center space-y-4">
-			<button class="big-button bg-green-500 hover:bg-green-600" on:click={() => (joining = true)}>
+			<Button
+				type="big"
+				classList="bg-green-500 hover:bg-green-600"
+				onClick={() => (joining = true)}
+			>
 				Join Game
-			</button>
-			<button class="big-button bg-blue-500 hover:bg-blue-600" on:click={createGame}>
+			</Button>
+			<Button type="big" classList="bg-blue-500 hover:bg-blue-600" onClick={createGame}>
 				Create Game
-			</button>
+			</Button>
 		</div>
 	{/if}
-	<button class="small-button bg-gray-100 hover:bg-gray-200" on:click={logOut}> Log Out </button>
+	<Button type="small" classList=" bg-gray-100 hover:bg-gray-200" onClick={logOut} text="Log Out" />
 </div>
 
 <style>

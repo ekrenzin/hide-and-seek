@@ -16,6 +16,7 @@ def capacitor_pods
   pod 'CapacitorFirebaseAuthentication', :path => '../../node_modules/@capacitor-firebase/authentication'
   pod 'CapacitorGeolocation', :path => '../../node_modules/@capacitor/geolocation'
   pod 'CapacitorGoogleMaps', :path => '../../node_modules/@capacitor/google-maps'
+  pod 'CapacitorHaptics', :path => '../../node_modules/@capacitor/haptics'
 end
 
 target 'App' do

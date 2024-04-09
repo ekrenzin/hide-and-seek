@@ -3,8 +3,14 @@
 	import { LoadingStatus } from '../store';
 	import Loading from '$lib/components/Loading.svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import '../app.css';
 	import '../fonts.css';
+	import { Haptics, ImpactStyle } from '@capacitor/haptics';
+
+	const hapticsVibrate = async () => {
+		await Haptics.vibrate();
+	};
 
 	authInitiated.subscribe((initiated: boolean) => {
 		if (!initiated) return;
@@ -14,6 +20,10 @@
 				goto('/login');
 			}
 		});
+	});
+
+	LoadingStatus.subscribe((loading: boolean) => {
+		hapticsVibrate();
 	});
 </script>
 

@@ -6,6 +6,7 @@
 	import { LobbyCode } from '$lib/utils/game';
 	import { LoadingStatus } from '../../store';
 	import { goto } from '$app/navigation';
+	import Button from '$lib/components/Button.svelte';
 
 	LobbyCode.subscribe((code) => {
 		if (!code) {
@@ -60,7 +61,7 @@
 		</div>
 	{/if}
 	<div class="flex-column gap-4">
-		<button class="big-button bg-green-500" on:click={startGame}> Start Game </button>
-		<button class="big-button bg-red-500" on:click={leaveGame}> Leave Game </button>
+		<Button type="big" text="Start Game" classList="bg-green-500" onClick={startGame} />
+		<Button type="big" text="Leave Game" classList="bg-red-500" onClick={leaveGame} />
 	</div>
 </div>

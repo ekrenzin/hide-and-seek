@@ -3,6 +3,7 @@
 	import { httpsCallable } from 'firebase/functions';
 	import { functions } from '$lib/utils/firebase';
 	import { LobbyCode } from '$lib/utils/game';
+	import Button from '../Button.svelte';
 
 	async function foundMe() {
 		//confirm so no accidental clicks
@@ -41,19 +42,19 @@
 		<!-- <h1>1500 points</h1> -->
 		<div class="flex-row gap-4">
 			{#if $CurrentLobbyUser.role === 'hider'}
-				<button class="small-button bg-red-500" on:click={foundMe}> Found Me!</button>
+				<Button text="Found Me!" type="small" classList="bg-red-500" onClick={foundMe} />
 			{:else}
-				<button class="small-button bg-red-500" on:click={hideMe}> Hide Me!</button>
+				<Button text="Hide Me!" type="small" classList="bg-red-500" onClick={hideMe} />
 			{/if}
-			<button class="small-button bg-gray-500" on:click={backToLobby}> Back to Lobby</button>
+			<Button text="Back to Lobby" type="small" classList="bg-gray-500" onClick={backToLobby} />
 		</div>
 		<!-- aboslute positioned button to refresh the page -->
-		<button
-			class="refresh-button small-button bg-gray-100 absolute"
-			on:click={() => window.location.reload()}
-		>
-			Refresh
-		</button>
+		<Button
+			text="Refresh"
+			type="small"
+			classList="refresh-button bg-gray-500"
+			onClick={() => window.location.reload()}
+		/>
 	</div>
 {/if}
 
