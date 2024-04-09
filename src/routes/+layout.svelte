@@ -8,8 +8,12 @@
 	import '../fonts.css';
 	import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
-	const hapticsVibrate = async () => {
-		await Haptics.vibrate();
+	const hapticsNotify = async () => {
+		await Haptics.notification();
+	};
+
+	const hapticsImpactLight = async () => {
+		await Haptics.impact({ style: ImpactStyle.Light });
 	};
 
 	authInitiated.subscribe((initiated: boolean) => {
@@ -23,7 +27,8 @@
 	});
 
 	LoadingStatus.subscribe((loading: boolean) => {
-		hapticsVibrate();
+		if (!loading) hapticsNotify();
+		else hapticsImpactLight();
 	});
 </script>
 
