@@ -159,7 +159,8 @@ export const markHider = onCall(async (request: CallableRequest) => {
 	if (!auth) {
 		throw new Error('Authentication required');
 	}
-	const { lobbyCode, uid } = data;
+	const { lobbyCode } = data;
+	const uid = auth.uid;
 	// Check if the lobby exists
 	const lobby = await db.collection('lobbies').doc(lobbyCode).get();
 	if (!lobby.exists) {
@@ -168,7 +169,8 @@ export const markHider = onCall(async (request: CallableRequest) => {
 
 	//mark the user as hider
 	await db.collection('lobbies').doc(lobbyCode).collection('users').doc(uid).update({
-		role: 'hider'
+		role: 'hider',
+		status: 'hidden'
 	});
 	// Return the lobby code to the caller
 	return { lobbyCode };
@@ -221,7 +223,7 @@ exports.handleUserFound = onDocumentUpdated('lobbies/{lobbyCode}/users/{userId}'
 		} else {
 			//calc the distance between the circle and the user
 			const distance = calculateDistance(newValues.position, newValues.circle);
-			//if the distance is greater than 10 meters, update the circle
+			//if the distance is greater than the radius, move the circle
 			const isOutside = distance > 50;
 			if (isOutside) {
 				const center = createCircleOffset(newValues.position);

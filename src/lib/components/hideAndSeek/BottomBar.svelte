@@ -17,6 +17,19 @@
 		console.log(foundMe);
 	}
 
+	async function hideMe() {
+		//confirm so no accidental clicks
+		if (!confirm('Are you sure you want to mark yourself as hidden?')) return;
+
+		const hideMe = await httpsCallable(
+			functions,
+			'markHider'
+		)({
+			lobbyCode: $LobbyCode
+		});
+		console.log(hideMe);
+	}
+
 	function backToLobby() {
 		window.location.href = '/lobby';
 	}
@@ -29,21 +42,33 @@
 		<div class="flex-row gap-4">
 			{#if $CurrentLobbyUser.role === 'hider'}
 				<button class="small-button bg-red-500" on:click={foundMe}> Found Me!</button>
+			{:else}
+				<button class="small-button bg-red-500" on:click={hideMe}> Hide Me!</button>
 			{/if}
 			<button class="small-button bg-gray-500" on:click={backToLobby}> Back to Lobby</button>
 		</div>
+		<!-- aboslute positioned button to refresh the page -->
+		<button
+			class="refresh-button small-button bg-gray-100 absolute"
+			on:click={() => window.location.reload()}
+		>
+			Refresh
+		</button>
 	</div>
 {/if}
 
 <style>
-	h1 {
-		font-size: 2rem;
-		font-weight: 900;
+	.refresh-button {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
 	}
 	h2 {
 		text-transform: uppercase;
 	}
 	.bar {
+		padding: 0.5rem;
+		width: 100%;
 		height: 125px;
 		position: absolute;
 		bottom: 0;

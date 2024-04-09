@@ -38,6 +38,11 @@ function generateMapStyles() {
 			stylers: [{ color: lightThemeColors.landParcelTextFill }]
 		},
 		{
+			featureType: 'Landscape.natural',
+			elementType: 'all',
+			stylers: [{ color: lightThemeColors.geometry }]
+		},
+		{
 			featureType: 'poi',
 			elementType: 'all',
 			stylers: [{ visibility: 'off' }]

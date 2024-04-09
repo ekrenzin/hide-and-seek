@@ -31,7 +31,7 @@ async function loadMap(mapRef: HTMLDivElement, pos: Position) {
 					lat: pos.coords.latitude,
 					lng: pos.coords.longitude
 				},
-				zoom: 16
+				zoom: 20
 			}
 		});
 		Map.set(map);
@@ -64,7 +64,6 @@ async function drawRangeCircles(map: GoogleMap, circles: UserCircle[]) {
 			console.error('Error removing marker', error);
 		}
 	}
-	console.log('Circles and markers removed, creating new ones', circles);
 	await createNewCircles(map, circles);
 }
 
@@ -75,21 +74,16 @@ async function createNewCircles(map: GoogleMap, circles: UserCircle[]) {
 	const circleIds: any[] = [];
 
 	for (const circle of circles) {
-		console.log('Creating new circle:', circle);
 		// testingCircle(circle, map);
-		//add random offset to the circle position
-		const circleData = createCircle(circle);
-		const markerData = createLabel(circleData);
-
 		if (circle.status === 'found') {
 			//add skull marker
 			const deadCircle = circle;
 			if (!deadCircle.foundPosition) return;
 
-			deadCircle.position = { coords: circle.foundPosition };
+			deadCircle.circle = circle.foundPosition;
 			deadCircle.color = '#000000';
 
-			const newCircle = createCircle(deadCircle, false);
+			const newCircle = createCircle(deadCircle);
 			const skullMarker = createLabel(newCircle, skull);
 			const skullMarkerId = await map.addMarker(skullMarker);
 			markerIds.push({
@@ -99,9 +93,10 @@ async function createNewCircles(map: GoogleMap, circles: UserCircle[]) {
 				color: newCircle.fillColor
 			});
 		} else {
+			const circleData = createCircle(circle);
+			const markerData = createLabel(circleData);
 			const markerId = await map.addMarker(markerData);
 			const circleId = await map.addCircles([circleData]);
-			console.log('Adding circle:', circleData, markerData);
 			markerIds.push({
 				id: markerId,
 				uid: circle.uid,
@@ -139,10 +134,14 @@ async function testingCircle(circle: UserCircle, map: GoogleMap) {
 }
 
 function createCircle(circle: UserCircle): Circle {
+	console.log('createCircle', circle);
 	return {
-		center: circle.circle,
+		center: {
+			lat: circle.circle.latitude || circle.circle.lat,
+			lng: circle.circle.longitude || circle.circle.lng
+		},
 		title: circle.name,
-		radius: 100,
+		radius: 50,
 		fillColor: `${circle.color}`,
 		strokeColor: `${circle.color}40`,
 		visible: true

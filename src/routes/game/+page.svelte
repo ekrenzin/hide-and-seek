@@ -12,6 +12,7 @@
 	let mapRef: HTMLDivElement;
 	let isLoading = true;
 	let lobbyUsersSubscription: () => void;
+	let startTimeout: any;
 
 	onMount(async () => {
 		isLoading = true;
@@ -23,18 +24,19 @@
 	});
 
 	async function startGame() {
+		if (startTimeout) clearTimeout(startTimeout);
 		const pos = await startLocationTracking();
 		if (!pos) {
 			console.error('No position');
 			//try again in 3 seconds
-			setTimeout(startGame, 3000);
+			startTimeout = setTimeout(startGame, 3000);
 			return;
 		}
-		const map = await loadMap(mapRef, pos);
+		const map = (await loadMap(mapRef, pos)) || $Map;
 		if (!map) {
-			console.error('No map');
+			console.warn('No map');
 			//try again in 3 seconds
-			setTimeout(startGame, 3000);
+			startTimeout = setTimeout(startGame, 3000);
 			return;
 		}
 
@@ -67,6 +69,12 @@
 
 		try {
 			lobbyUsersSubscription();
+		} catch (e) {
+			console.error(e);
+		}
+
+		try {
+			clearTimeout(startTimeout);
 		} catch (e) {
 			console.error(e);
 		}
